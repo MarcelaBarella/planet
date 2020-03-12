@@ -1,0 +1,73 @@
+<html>
+    <head>
+        <title>Saturn</title>
+        <link rel = "stylesheet" href = "Style.css">
+        <script src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.js"></script>
+        <body></body>
+    </head>
+</html>
+<script>
+    let scene, camera, renderer;
+    let rings = [];
+    let ADD = 0.025;
+
+    let createSaturn = function() {
+        // Sphere is the planet perse
+        let sphereGeometry = new THREE.SphereGeometry(4, 30, 30);
+        materialSphere = new THREE.MeshBasicMaterial({color: 0xe600e6});
+        sphere = new THREE.Mesh( sphereGeometry, materialSphere );
+
+        // Rings
+        let ringOneGeometry = new THREE.TorusGeometry(5.75, .89, 2.7, 50);
+        materialRingOne = new THREE.MeshBasicMaterial({color: 0x00aaff});
+        ringOne = new THREE.Mesh( ringOneGeometry, materialRingOne );
+        rings.push(ringOne);
+
+        let ringTwoGeometry = new THREE.TorusGeometry(7.75, .89, 2.7, 50);
+        materialRingTwo = new THREE.MeshBasicMaterial({color: 0xffff00});
+        ringTwo = new THREE.Mesh( ringTwoGeometry, materialRingTwo );
+        rings.push(ringTwo);
+
+        let ringThreeGeometry = new THREE.TorusGeometry(9.75, .89, 2.7, 50);   
+        materialRingThree = new THREE.MeshBasicMaterial({color: 0x66ff66});
+        ringThree = new THREE.Mesh( ringThreeGeometry, materialRingThree );
+        rings.push(ringThree);
+
+        scene.add(sphere);
+        rings.forEach(ring => {
+            ring.rotation.x = 2;
+            ring.rotation.y = 0.6;
+            scene.add(ring);
+        });
+    };
+
+    let init = function() {
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x000000);
+
+        camera = new THREE.PerspectiveCamera(75,
+                    window.innerWidth / window.innerHeight,
+                    1, 1000);
+        camera.position.z = 20;
+        // camera.position.x = 50;
+
+        createSaturn();
+
+        renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        document.body.appendChild(renderer.domElement);
+    };
+
+    let mainLoop = function() {
+        camera.position.y += ADD;
+
+        if(camera.position.y >= 5 || camera.position.y <= -5)
+            ADD *= -1;
+        renderer.render(scene, camera);
+        requestAnimationFrame(mainLoop);
+    };
+
+    init();
+    mainLoop();
+</script>
